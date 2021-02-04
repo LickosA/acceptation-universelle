@@ -6,7 +6,7 @@
 
 #Modules
 import dns.resolver
-import sys
+import sys, getopt
 import subprocess
 import socket
 import smtplib
@@ -18,6 +18,7 @@ from nmap import *
 
 # 
 
+dict = {}
 
 def getMX(domain):
     mx = []
@@ -85,15 +86,27 @@ def test(d):
 # 
 
 def main():
-    if(len(sys.argv[1])==0):
-        print(test(str(sys.argv[1:])))
+    if(sys.argv[1]=='-i'):
+        with open(sys.argv[2]) as topo_file:
+            for line in topo_file:
+                #print(str(line))
+                print(test(str(line.rstrip())))
     else:
-        args = sys.argv[1].split(',')
-        args = np.array([str(i) for i in args]) 
-        #print(args)
-        for i in range(0, len(args)):
-            print(test(str(args[i])))
+        if(len(sys.argv[1])==0):
+            print(test(str(sys.argv[1:])))
+            dict['final'] = test(str(sys.argv[1:]))
+            print(dict)
+        else:
+            args = sys.argv[1].split(',')
+            args = np.array([str(i) for i in args]) 
+            #print(args)
+            for i in range(0, len(args)):          
+                dict[i]= test(str(args[i]))
+            print(dict)
 
+    exDict = {'final' : dict}
+    with open('file.json', 'w') as file:
+        file.write(json.dumps(exDict)) # use `json.loads` to do the rev
 # 
 
 if __name__ == "__main__":
