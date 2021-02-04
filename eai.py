@@ -12,6 +12,7 @@ import socket
 import smtplib
 import json
 import os
+import numpy as np
 from nmap import *
 
 
@@ -84,8 +85,14 @@ def test(d):
 # 
 
 def main():
-    print(test('isoc.bj'))
-
+    if(len(sys.argv[1])==0):
+        print(test(str(sys.argv[1:])))
+    else:
+        args = sys.argv[1].split(',')
+        args = np.array([str(i) for i in args]) 
+        #print(args)
+        for i in range(0, len(args)):
+            print(test(str(args[i])))
 
 # 
 
