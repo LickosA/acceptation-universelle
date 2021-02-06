@@ -14,7 +14,7 @@ import json
 import os
 import numpy as np
 from nmap import *
-
+import argparse
 
 # 
 
@@ -86,27 +86,34 @@ def test(d):
 # 
 
 def main():
-    if(sys.argv[1]=='-i'):
-        with open(sys.argv[2]) as topo_file:
+    parser = argparse.ArgumentParser(description="")
+    parser.add_argument('-f', help="utilisez -f pour passer un fichier en argument")
+    parser.add_argument('-d', help="utilisez -d pour passer directement un nom de domaine en argument")
+    parser.add_argument('-l', help="utilisez -l pour passer directement une liste de nom de domaine en argument")
+    args = parser.parse_args()
+    print('args is: ', args)
+    if(args.d != None and args.f == None and args.l == None):
+        print(test(str(args.d)))
+        dict['final'] = test(str(args.d))
+        #print('domaine')
+    if(args.f != None and args.d == None and args.l == None):
+        with open(args.f) as topo_file:
             for line in topo_file:
-                #print(str(line))
                 print(test(str(line.rstrip())))
-    else:
-        if(len(sys.argv[1])==0):
-            print(test(str(sys.argv[1:])))
-            dict['final'] = test(str(sys.argv[1:]))
-            print(dict)
-        else:
-            args = sys.argv[1].split(',')
-            args = np.array([str(i) for i in args]) 
-            #print(args)
-            for i in range(0, len(args)):          
-                dict[i]= test(str(args[i]))
-            print(dict)
+        #print('Fichier')
+    if(args.l != None and args.f == None and args.d == None):
+        liste = args.l.split(',')
+        liste = np.array([str(i) for i in liste]) 
+        for i in range(0, len(liste)):
+            print(test(str(liste[i])))          
+            dict[i]= test(str(liste[i]))
+        #print('Liste')
+    
 
     exDict = {'final' : dict}
     with open('file.json', 'w') as file:
-        file.write(json.dumps(exDict)) # use `json.loads` to do the rev
+        file.write(json.dumps(dict)) # use `json.loads` to do the rev
+    
 # 
 
 if __name__ == "__main__":
